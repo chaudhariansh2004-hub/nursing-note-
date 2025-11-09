@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Nursing Notes Hub</title>
+<style>
+  :root{
+    --bg:#f6f8fb;
+    --card:#ffffff;
+    --muted:#65748b;
+    --accent:#2b7a78;
+    --accent-2:#48b6b0;
+    --glass: rgba(255,255,255,0.7);
+    --shadow: 0 6px 18px rgba(45,55,85,0.08);
+    --radius:14px;
+  }
+  /* Dark theme variables (swapped with JS) */
+  :root.dark{
+    --bg:#0f1724;
+    --card:#071129;
+    --muted:#9aa7bf;
+    --accent:#58d7c8;
+    --accent-2:#2fbfb5;
+    --glass: rgba(255,255,255,0.04);
+    --shadow: 0 8px 24px rgba(2,6,23,0.6);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, "Noto Sans", system-ui, sans-serif;
+    background:linear-gradient(180deg,var(--bg), #e9f6f5 60%);
+    color: #071326;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:28px;
+  }
+  header{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo{
+    width:56px;height:56px;border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:grid;place-items:center;color:white;font-weight:700;font-size:20px;
+    box-shadow:var(--shadow);
+  }
+  h1{font-size:20px;margin:0}
+  p.lead{margin:0;color:var(--muted);font-size:13px}
+
+  .controls{display:flex;gap:10px;align-items:center}
+  .search{
+    display:flex;align-items:center;background:var(--card);padding:8px 10px;border-radius:10px;box-shadow:var(--shadow);
+  }
+  .search input{
+    border:0;outline:0;background:transparent;width:180px;font-size:14px;color:inherit;
+  }
+  .btn{
+    background:var(--accent); color:#fff;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600;
+    box-shadow:0 6px 16px rgba(43,122,120,0.18);
+  }
+  .btn.ghost{background:transparent;color:var(--accent);box-shadow:none;border:1px solid rgba(43,122,120,0.12)}
+  .toggle{
+    width:44px;height:28px;border-radius:20px;background:var(--card);display:flex;align-items:center;padding:4px;cursor:pointer;box-shadow:var(--shadow);
+  }
+  .dot{width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#fff,#f1f5f9);margin-left:auto;transition:all .2s;}
+
+  main{margin-top:18px}
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+    gap:16px;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:16px;
+    box-shadow:var(--shadow);
+    transition:transform .18s, box-shadow .18s;
+    overflow:hidden;
+  }
+  .card:hover{transform:translateY(-6px)}
+  .card .tag{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;color:var(--accent);background:rgba(43,122,120,0.06);margin-bottom:10px}
+  .card h3{margin:6px 0 8px;font-size:16px}
+  .card p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+
+  .notes-list{display:grid;gap:12px;margin-top:12px}
+  .note{
+    display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:12px;background:linear-gradient(180deg,var(--glass),transparent);
+    border:1px solid rgba(0,0,0,0.03);
+  }
+  .note .icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(180deg,var(--accent-2),var(--accent));display:grid;place-items:center;color:white;font-weight:700}
+  .note h4{margin:0;font-size:14px}
+  .note p{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+  footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
+
+  /* Responsive tweaks */
+  @media (max-width:560px){
+    .search input{width:100px}
+    body{padding:18px}
+  }
+
+  /* small utility */
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .big-hero{
+    display:flex;gap:18px;align-items:center;padding:18px;border-radius:18px;background:linear-gradient(90deg, rgba(43,122,120,0.06), rgba(72,182,176,0.03));
+    margin-bottom:12px;
+  }
+  .big-hero .left{flex:1}
+  .big-hero .right{width:140px;height:100px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:white;font-weight:700;box-shadow:var(--shadow)}
+  .sm-muted{color:var(--muted);font-size:13px}
+  .learn-btn{background:transparent;border:1px solid rgba(43,122,120,0.12);padding:8px 10px;border-radius:8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">NN</div>
+    <div>
+      <h1>Nursing Notes Hub</h1>
+      <p class="lead">Quick nursing summaries • Revision cards • Clinical tips</p>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search" title="Search notes">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#6b7a88" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>
+      <input id="search" placeholder="Search notes, e.g. labour" />
+    </div>
+
+    <button class="btn" id="addDemo">Add Demo Note</button>
+
+    <div class="toggle" id="themeToggle" title="Dark / Light">
+      <div class="dot" id="dot"></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="big-hero card">
+    <div class="left">
+      <h2 style="margin:0 0 6px 0">Fast revision for nursing students</h2>
+      <p class="sm-muted">Short notes, clinical tips, and quick memory aids — mobile friendly for on-the-go revision.</p>
+      <div style="margin-top:12px" class="row">
+        <button class="btn">Start Revision</button>
+        <button class="learn-btn">Download PDF</button>
+      </div>
+    </div>
+    <div class="right">Notes</div>
+  </section>
+
+  <section class="grid">
+    <div class="card">
+      <span class="tag">Fundamentals</span>
+      <h3>Normal Puerperium — Key Points</h3>
+      <p>Normal puerperium ka short summary: uterus involution, lochia stages, breastfeeding tips, danger signs to report.</p>
+      <div class="notes-list" id="list1">
+        <div class="note">
+          <div class="icon">P</div>
+          <div>
+            <h4>Lochia Stages</h4>
+            <p>Rubra → Serosa → Alba. Report heavy soak >1 pad/hr.</p>
+          </div>
+        </div>
+        <div class="note">
+          <div class="icon">U</div>
+          <div>
+            <h4>Uterus Involution</h4>
+            <p>Fundal height decreases ~1cm/day; by 2 weeks near pelvis.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="tag">Obstetrics</span>
+      <h3>Stages of Labour — Quick</h3>
+      <p>Active and passive phases, cardinal movements, and key care points for each stage.</p>
+      <div class="notes-list" id="list2">
+        <div class="note">
+          <div class="icon">1</div>
+          <div>
+            <h4>First Stage</h4>
+            <p>Latent & active; monitor contractions, vitals, fetal heart every 30-60 min.</p>
+          </div>
+        </div>
+        <div class="note">
+          <div class="icon">2</div>
+          <div>
+            <h4>Second Stage</h4>
+            <p>When fully dilated → start pushing; support perineum; monitor baby.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="tag">Drugs & Doses</span>
+      <h3>Emergency Drugs — Mnemonics</h3>
+      <p>Essential emergency drugs list and one-line uses for quick recall during tests or practice.</p>
+      <div class="notes-list" id="list3">
+        <div class="note">
+          <div class="icon">A</div>
+          <div>
+            <h4>Oxytocin</h4>
+            <p>For postpartum hemorrhage; follow local protocol for dose.</p>
+          </div>
+        </div>
+        <div class="note">
+          <div class="icon">B</div>
+          <div>
+            <h4>Adrenaline</h4>
+            <p>Cardiac arrest / anaphylaxis — emergency use.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section style="margin-top:18px" class="card">
+    <h3>All Notes</h3>
+    <p class="sm-muted" style="margin-top:6px">Type in the search box to filter notes. Use "Add Demo Note" to see how new items appear.</p>
+
+    <div id="allNotes" style="margin-top:12px" class="notes-list">
+      <!-- JS will populate -->
+    </div>
+  </section>
+
+  <footer>
+    © <span id="yr"></span> Nursing Notes Hub — Fast revision on mobile. Need customization? Edit the code in your editor.
+  </footer>
+</main>
+
+<script>
+  // initial demo data
+  const notes = [
+    {title:"Migraine — Treatment", text:"Analgesics, antiemetics, avoid triggers; refer if red flags."},
+    {title:"IV Cannulation steps", text:"Explain procedure, clean site, choose vein, secure cannula."},
+    {title:"Postpartum Hemorrhage", text:"ABC, uterine massage, oxytocin, call for help."},
+    {title:"Breastfeeding tips", text:"Correct latch, feeding cues, positioning, frequency 8-12 times/day."}
+  ];
+
+  const yr = document.getElementById('yr');
+  yr.textContent = new Date().getFullYear();
+
+  const allNotesEl = document.getElementById('allNotes');
+
+  function renderNotes(filter=""){
+    allNotesEl.innerHTML = "";
+    const f = filter.trim().toLowerCase();
+    const list = notes.filter(n => (n.title + " " + n.text).toLowerCase().includes(f));
+    if(list.length===0){
+      allNotesEl.innerHTML = '<div style="padding:12px;color:var(--muted)">No notes found. Try different keyword.</div>';
+      return;
+    }
+    list.forEach(n=>{
+      const div = document.createElement('div');
+      div.className = 'note';
+      div.innerHTML = `<div class="icon">${n.title.charAt(0).toUpperCase()}</div>
+        <div><h4>${n.title}</h4><p>${n.text}</p></div>`;
+      allNotesEl.appendChild(div);
+    });
+  }
+  renderNotes();
+
+  document.getElementById('search').addEventListener('input', (e)=>{
+    renderNotes(e.target.value);
+  });
+
+  // Add demo note button
+  document.getElementById('addDemo').addEventListener('click', ()=>{
+    const t = prompt("Note title (example: ECG Steps):","ECG Steps");
+    if(!t) return;
+    const txt = prompt("Short text for note:","Lead placement, rhythm check, basic interpretation.");
+    notes.unshift({title:t, text: txt || ""});
+    renderNotes(document.getElementById('search').value);
+  });
+
+  // Theme toggle (simple)
+  const themeToggle = document.getElementById('themeToggle');
+  const dot = document.getElementById('dot');
+  const root = document.documentElement;
+  let dark = false;
+  function applyTheme(){
+    if(dark){ root.classList.add('dark'); dot.style.marginLeft = '4px'; dot.style.background = 'linear-gradient(180deg,#0b2430,#07313a)'; }
+    else { root.classList.remove('dark'); dot.style.marginLeft = 'auto'; dot.style.background = 'linear-gradient(180deg,#fff,#f1f5f9)'; }
+  }
+  themeToggle.addEventListener('click', ()=>{
+    dark = !dark;
+    applyTheme();
+  });
+  // remember last theme in localStorage if available
+  try{
+    const saved = localStorage.getItem('nnh-dark');
+    if(saved !== null){ dark = saved === '1'; applyTheme(); }
+    window.addEventListener('beforeunload', ()=> localStorage.setItem('nnh-dark', dark ? '1' : '0'));
+  }catch(e){/*ignore*/}
+
+  // small enhancement: press "/" to focus search
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === "/"){ e.preventDefault(); document.getElementById('search').focus(); }
+  });
+</script>
+</body>
+</html>
